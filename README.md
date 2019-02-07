@@ -9,8 +9,10 @@ This can be done as follows:
 - Align the RNASeq data to the genome (gcHR37). We recommend the STAR aligner (https://github.com/alexdobin/STAR). The rest of the pipeline assumes you've generated one bam file per sample.
 - Generate indices for the alignment bam files and merge them.
 
-```find bam_files/*.bam | xargs -P 30 -n 1 /samtools index```
-```/samtools merge --threads 30 -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam```
+```
+find bam_files/*.bam | xargs -P 30 -n 1 /samtools index
+/samtools merge --threads 30 -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam
+```
 
 - Samtools merge does not keep readgroup information, which links the reads to the sample. We regenerate this using the bam filenames.
 
@@ -21,7 +23,9 @@ find bam_files/*.bam | /generate_RGs.py >> bam_files.merged_chr1.new_header"
 ```
  - Use gatk MarkDuplicates to keep freebayes from crashing due to deep piles of highly abundant transcripts.
 
-```java -jar /gatk-package-4.0.11.0-local.jar MarkDuplicates --INPUT bam_files.merged_chr1.header_withRG.bam --OUTPUT bam_files.merged_chr1.header_withRG.MarkDuplicates.bam --CREATE_INDEX -M MarkDuplicates.metrics --VALIDATION_STRINGENCY LENIENT```
+```
+java -jar /gatk-package-4.0.11.0-local.jar MarkDuplicates --INPUT bam_files.merged_chr1.header_withRG.bam --OUTPUT bam_files.merged_chr1.header_withRG.MarkDuplicates.bam --CREATE_INDEX -M MarkDuplicates.metrics --VALIDATION_STRINGENCY LENIENT
+```
  
 - Call SNPs using freebayes
 
@@ -36,17 +40,22 @@ ulimit -n 160000;
 
 - Filter the RNASeq SNP calls by quality.
 
-```/vcffilter -f 'QUAL > 20' vcf_file > vcf_file.QUAL_GT_20.vcf```
+```
+/vcffilter -f 'QUAL > 20' vcf_file > vcf_file.QUAL_GT_20.vcf
+```
 
 - Filter the high quality RNASeq SNPs, keeping only common genomic SNPs.
 
-```grep '^#' vcf_file.QUAL_GT_20.vcf > vcf_file.QUAL_GT_20.common_snps_only.vcf
+```
+grep '^#' vcf_file.QUAL_GT_20.vcf > vcf_file.QUAL_GT_20.common_snps_only.vcf
 /bedtools intersect -a vcf_file.QUAL_GT_20.vcf -b /00-common_all.vcf.gz -wa >> vcf_file.QUAL_GT_20.common_snps_only.vcf")
 ```
 
 - Finally we can generate the similarity matrix.
 
-```R CMD BATCH vcf_to_similarity_matrix.R```
+```
+R CMD BATCH vcf_to_similarity_matrix.R
+```
 
 
 
