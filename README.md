@@ -1,12 +1,23 @@
 # Generate a sample relatedness matrices from RNASeq data
-Sample confusion is a common laboratory problem. In RNASeq this is frequently tested for by checking whether sex-specific genes (y chromosomal, Xist) are congruent with the sex listed for that sample in the metadata. However, this method cannot be used to detect sample confusion between patients of the same sex. Here we leverage RNASeq reads to call genomic SNPs, and use that to generate a relatedness matrix between all samples. Samples from the same patient should be highly similar, samples from different patients should not be similar (assuming patients are unrelated).
+Sample confusion is a common laboratory problem. In RNASeq this is frequently tested for by checking whether sex-specific genes (y chromosomal, Xist) are congruent with the sex listed for that sample in the metadata. However, this method cannot be used to detect sample confusion between patients of the same sex. Here we leverage RNASeq reads to call genomic SNPs, and use that to generate a relatedness matrix between all samples. 
 
-
+Samples from the same patient should be highly similar, samples from different patients should not be similar (assuming patients are unrelated).
 
 RNASeq data is often used to detetermine transcript abundances for each gene after which the original data is discarded. However, the SNP data obtained by RNASeq can be used to generate relatedness.
 
-This can be done as follows:
-- Align the RNASeq data to the genome (gcHR37). We recommend the STAR aligner (https://github.com/alexdobin/STAR). The rest of the pipeline assumes you've generated one bam file per sample.
+Doing this requires a number of tools and commands, we have wrapped these in a docker image. 
+
+## Instructions
+- Align the RNASeq data to the genome (gcHR37). We recommend the STAR aligner (https://github.com/alexdobin/STAR). The rest of the pipeline assumes you've generated one sorted bam file per sample, place these in an otherwise empty directory called bam_files. 
+- Run the following docker invocation on a machine with sufficient memory and cores. This may take a few days.
+```
+docker magic -v bam_files:/home/ubuntu/bam_files
+```
+- Retrieve the sample relatedness matrix from bam_files/sequence_similarity_matrix/sequence_similarity_matrix.png.
+
+
+# Technical Details
+## What the docker invocation does.
 - Generate indices for the alignment bam files and merge them.
 
 ```
