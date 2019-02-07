@@ -34,8 +34,8 @@ java -jar /gatk-package-4.0.11.0-local.jar MarkDuplicates --INPUT bam_files.merg
 # presupplied as chr1_regions in resources directory.
 
 ulimit -n 160000; 
-        cd /freebayes/scripts; 
-        ./freebayes-parallel /chr1_regions 30 --use-best-n-alleles 4 -f /Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -b ~/bam_files.merged_chr1.header_withRG.MarkDuplicates.bam > ~/bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf;
+cd /freebayes/scripts; 
+./freebayes-parallel /chr1_regions 30 --use-best-n-alleles 4 -f /Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -b ~/bam_files.merged_chr1.header_withRG.MarkDuplicates.bam > ~/bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf;
 ```
 
 - Filter the RNASeq SNP calls by quality.
