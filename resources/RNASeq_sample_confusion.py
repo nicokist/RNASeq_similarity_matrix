@@ -9,14 +9,14 @@ def call_and_check(command):
     print('Returned: %d' % ret)
     if(ret!=0): raise ValueError('non-zero return code')    
 
-call_and_check("find bam_files/*.bam | xargs -P 30 -n 1 /samtools index")
-call_and_check("/samtools merge --threads 30 -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam")
-call_and_check("/samtools view -H bam_files.merged_chr1.bam | grep -v '^@RG' > bam_files.merged_chr1.new_header")
-call_and_check("find bam_files/*.bam | /generate_RGs.py >> bam_files.merged_chr1.new_header")
-call_and_check("/samtools reheader bam_files.merged_chr1.new_header bam_files.merged_chr1.bam > bam_files.merged_chr1.header_withRG.bam")
-call_and_check('java -jar /gatk-package-4.0.11.0-local.jar MarkDuplicates --INPUT bam_files.merged_chr1.header_withRG.bam --OUTPUT bam_files.merged_chr1.header_withRG.MarkDuplicates.bam --CREATE_INDEX -M MarkDuplicates.metrics --VALIDATION_STRINGENCY LENIENT')
+call_and_check("find bam_files/*.bam | xargs -P 30 -n 1 /app/samtools index")
+call_and_check("/app/samtools merge --threads 30 -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam")
+call_and_check("/app/samtools view -H bam_files.merged_chr1.bam | grep -v '^@RG' > bam_files.merged_chr1.new_header")
+call_and_check("find bam_files/*.bam | /app/generate_RGs.py >> bam_files.merged_chr1.new_header")
+call_and_check("/app/samtools reheader bam_files.merged_chr1.new_header bam_files.merged_chr1.bam > bam_files.merged_chr1.header_withRG.bam")
+call_and_check('java -jar /app/gatk-package-4.0.11.0-local.jar MarkDuplicates --INPUT bam_files.merged_chr1.header_withRG.bam --OUTPUT bam_files.merged_chr1.header_withRG.MarkDuplicates.bam --CREATE_INDEX -M MarkDuplicates.metrics --VALIDATION_STRINGENCY LENIENT')
 
-call_and_check("gzip -d /Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz")
+call_and_check("gzip -d /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz")
 
 
 #samtools faidx output (Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.fai) is supplied in resources.
