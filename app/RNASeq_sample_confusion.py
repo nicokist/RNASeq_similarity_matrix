@@ -16,7 +16,6 @@ call_and_check("find bam_files/*.bam | /app/generate_RGs.py >> bam_files.merged_
 call_and_check("/app/samtools reheader bam_files.merged_chr1.new_header bam_files.merged_chr1.bam > bam_files.merged_chr1.header_withRG.bam")
 call_and_check('java -jar /app/gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar MarkDuplicates --INPUT bam_files.merged_chr1.header_withRG.bam --OUTPUT bam_files.merged_chr1.header_withRG.MarkDuplicates.bam --CREATE_INDEX -M MarkDuplicates.metrics --VALIDATION_STRINGENCY LENIENT')
 
-call_and_check("gzip -d /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz")
 
 
 #samtools faidx output (Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.fai) is supplied in resources.
