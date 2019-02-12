@@ -39,7 +39,7 @@ call_and_check(
 
 call_and_check(
     """ulimit -n 160000;
-    cd /freebayes/scripts;
+    cd /app/freebayes/scripts;
     ./freebayes-parallel /chr1_regions 30 --use-best-n-alleles 4 -f /Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -b /home/dnanexus/bam_files.merged_chr1.header_withRG.MarkDuplicates.bam > /home/dnanexus/bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf;
     """
 )
@@ -52,6 +52,6 @@ call_and_check(
     "grep '^#' vcf_file.QUAL_GT_20.vcf > vcf_file.QUAL_GT_20.common_snps_only.vcf"
 )
 call_and_check(
-    "/bedtools intersect -a vcf_file.QUAL_GT_20.vcf -b /00-common_all.vcf.gz -wa >> vcf_file.QUAL_GT_20.common_snps_only.vcf"
+    "/app/bedtools intersect -a vcf_file.QUAL_GT_20.vcf -b /00-common_all.vcf.gz -wa >> vcf_file.QUAL_GT_20.common_snps_only.vcf"
 )
-call_and_check("R CMD BATCH /vcf_to_similarity_matrix.R")
+call_and_check("R CMD BATCH /app/vcf_to_similarity_matrix.R")
