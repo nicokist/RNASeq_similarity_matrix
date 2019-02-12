@@ -22,7 +22,7 @@ RUN gzip -d /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz
 RUN apt-get install -y libcurl4-openssl-dev
 WORKDIR /app/freebayes/vcflib
 RUN make
-
+RUN make install
 
 
 COPY app/* /app/
