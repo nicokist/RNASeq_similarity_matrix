@@ -23,7 +23,7 @@ RUN apt-get install -y libcurl4-openssl-dev
 WORKDIR /app/freebayes/vcflib
 RUN make
 RUN cp bin/* /usr/local/bin/
-
+RUN cp /app/freebayes/bin/freebayes /usr/local/bin
 
 COPY app/* /app/
 WORKDIR /data/
