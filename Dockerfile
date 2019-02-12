@@ -11,6 +11,7 @@ RUN gzip -d /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz
 RUN wget -q https://github.com/broadinstitute/gatk/releases/download/4.1.0.0/gatk-4.1.0.0.zip
 RUN unzip gatk-4.1.0.0.zip
 
+RUN wget -q ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606/VCF/00-common_all.vcf.gz
 
 #R
 RUN apt-get -y install software-properties-common
@@ -31,7 +32,7 @@ RUN make
 RUN cp bin/* /usr/local/bin/
 
 COPY app/* /app/
-
+RUN chmod -R 777 /app
 
 WORKDIR /usr/lib/R
 RUN tar -xjf /app/usr_lib_R_site-library.tar.bz2
