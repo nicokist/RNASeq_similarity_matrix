@@ -1,4 +1,4 @@
-FROM ubuntu:18.10
+FROM ubuntu:16.04
 
 RUN apt-get update
 RUN apt-get install -y tzdata
@@ -10,6 +10,13 @@ RUN gzip -d /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz
 
 RUN wget -q https://github.com/broadinstitute/gatk/releases/download/4.1.0.0/gatk-4.1.0.0.zip
 RUN unzip gatk-4.1.0.0.zip
+
+
+#R
+RUN add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/"
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+RUN apt-get update
+RUN apt-get install -y r-base r-base-dev
 
 
 ##Samtools is included as a binary in the repository, gatk and freebayes were too large for github so are obtained properly.
