@@ -34,7 +34,7 @@ call_and_check(
 # presupplied as chr1_regions in resources directory.
 
 call_and_check(
-    "samtools faidx /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
+    "/app/samtools faidx /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
 )
 
 
