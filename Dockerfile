@@ -15,7 +15,16 @@ RUN unzip gatk-4.1.0.0.zip
 RUN wget -q ftp://ftp.ensembl.org/pub/release-84/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz
 RUN gzip -d /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz
 
+
+
+
+
 RUN apt-get install -y libcurl4-openssl-dev
+WORKDIR /app/freebayes/vcflib
+RUN make
+
+
+
 COPY app/* /app/
 WORKDIR /data/
 CMD ["python", "/app/RNASeq_sample_confusion.py"]
