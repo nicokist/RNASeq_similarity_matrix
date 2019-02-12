@@ -13,9 +13,9 @@ def call_and_check(command):
         raise ValueError("non-zero return code")
 
 
-call_and_check("find bam_files/*.bam | xargs -P 30 -n 1 /app/samtools index")
+call_and_check("find bam_files/*.bam | xargs -P `nproc` -n 1 /app/samtools index")
 call_and_check(
-    "/app/samtools merge --threads 30 -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam"
+    "/app/samtools merge --threads `nproc` -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam"
 )
 call_and_check(
     "/app/samtools view -H bam_files.merged_chr1.bam | grep -v '^@RG' > bam_files.merged_chr1.new_header"
@@ -30,17 +30,19 @@ call_and_check(
     "java -jar /app/gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar MarkDuplicates --INPUT bam_files.merged_chr1.header_withRG.bam --OUTPUT bam_files.merged_chr1.header_withRG.MarkDuplicates.bam --CREATE_INDEX -M MarkDuplicates.metrics --VALIDATION_STRINGENCY LENIENT"
 )
 
-
-# samtools faidx output (Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.fai) is supplied in resources.
-
 # ~/tools/freebayes/scripts/fasta_generate_regions.py ~/temp/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa 100000 |  grep '^1\:'  > ~/temp/
 # presupplied as chr1_regions in resources directory.
+
+call_and_check(
+    "samtools faidx /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
+)
+
 
 
 call_and_check(
     """ulimit -n 160000;
     cd /app/freebayes/scripts;
-    ./freebayes-parallel /app/chr1_regions 30 --use-best-n-alleles 4 -f /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -b /data/bam_files.merged_chr1.header_withRG.MarkDuplicates.bam > /data/bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf;
+    ./freebayes-parallel /app/chr1_regions `nproc` --use-best-n-alleles 4 -f /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -b /data/bam_files.merged_chr1.header_withRG.MarkDuplicates.bam > /data/bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf;
     """
 )
 
