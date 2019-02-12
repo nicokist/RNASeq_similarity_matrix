@@ -34,7 +34,7 @@ COPY app/* /app/
 
 
 WORKDIR /usr/local/lib
-RUN tar -xjf /app/usr_local_lib_R.tar.bz2
+RUN tar -xjf /app/usr_lib_R_site-library.tar.bz2
 
 
 WORKDIR /data/
