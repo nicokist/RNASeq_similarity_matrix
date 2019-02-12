@@ -33,7 +33,7 @@ RUN cp bin/* /usr/local/bin/
 COPY app/* /app/
 
 
-WORKDIR /usr/local/lib
+WORKDIR /usr/lib/R
 RUN tar -xjf /app/usr_lib_R_site-library.tar.bz2
 
 
