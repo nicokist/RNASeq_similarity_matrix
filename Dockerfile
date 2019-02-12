@@ -14,7 +14,7 @@ RUN unzip gatk-4.1.0.0.zip
 
 #R
 RUN apt-get -y install software-properties-common
-RUN add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/"
+RUN add-apt-repository "deb http://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/"
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
 RUN apt-get update
 RUN apt-get install -y r-base r-base-dev
