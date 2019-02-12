@@ -19,9 +19,6 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
 RUN apt-get update
 RUN apt-get install -y r-base r-base-dev
 
-WORKDIR /usr/local/lib
-RUN tar -xjf /app/usr_local_lib_R.tar.bz2
-WORKDIR /app
 
 ##Samtools is included as a binary in the repository, gatk and freebayes were too large for github so are obtained properly.
 RUN git clone --recursive git://github.com/ekg/freebayes.git
@@ -34,5 +31,11 @@ RUN make
 RUN cp bin/* /usr/local/bin/
 
 COPY app/* /app/
+
+
+WORKDIR /usr/local/lib
+RUN tar -xjf /app/usr_local_lib_R.tar.bz2
+
+
 WORKDIR /data/
 CMD ["python", "/app/RNASeq_sample_confusion.py"]
