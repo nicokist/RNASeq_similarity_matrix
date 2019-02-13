@@ -21,6 +21,29 @@ sudo docker run --user `id -u`:`id -g` -it -v `pwd`:/data rnaseq_relatedness
 - The sequence similarity matrix and a visualization thereof will be left in the current directory if everything finishes successfully.
 
 
+#If you don't have bam files
+If you don't have GRCh38 bam files it is recommended to use STAR to align your fastq files to the reference genome, creating a single bam file for each sample.
+
+First generate a genome index:
+```
+wget 'ftp://ftp.ensembl.org/pub/release-84/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz'
+gzip -d Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz
+
+
+wget 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.annotation.gtf.gz'
+gzip -d gencode.v29.annotation.gtf.gz
+
+
+docker build https://raw.githubusercontent.com/alexdobin/STAR/master/extras/docker/Dockerfile -t star
+mkdir Homo_sapiens.GRCh38.dna_sm.primary_assembly.star_genome
+docker run -v `pwd`:/data star STAR --runThreadN `nproc` --runMode genomeGenerate --genomeDir /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.star_genome --genomeFastaFiles /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa --sjdbGTFfile /data/gencode.v29.primary_assembly.annotation.gtf
+```
+
+Then generate a bam file by running the following command for each sample:
+```
+
+```
+
 # Technical Details
 We use Docker to deliver a linux image with everything needed for the pipeline pre-installed. This includes a script which executes all steps in turn. If for some reason you wish to use one of the supplied programs manually you can use the following invocation, with the desired command in quotation marks after `bash -c` at the end:
 
