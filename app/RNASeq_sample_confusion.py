@@ -48,12 +48,12 @@ call_and_check(
 
 
 call_and_check(
-    "/app/vcffilter -f 'QUAL > 20' /bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf > vcf_file.QUAL_GT_20.vcf"
+    "/app/vcffilter -f 'QUAL > 20' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf > vcf_file.QUAL_GT_20.vcf"
 )
 call_and_check(
     "grep '^#' vcf_file.QUAL_GT_20.vcf > vcf_file.QUAL_GT_20.common_snps_only.vcf"
 )
 call_and_check(
-    "/app/bedtools intersect -a vcf_file.QUAL_GT_20.vcf -b /00-common_all.vcf.gz -wa >> vcf_file.QUAL_GT_20.common_snps_only.vcf"
+    "/app/bedtools intersect -a vcf_file.QUAL_GT_20.vcf -b /app/00-common_all.vcf.gz -wa >> vcf_file.QUAL_GT_20.common_snps_only.vcf"
 )
 call_and_check("R CMD BATCH /app/vcf_to_similarity_matrix.R")
