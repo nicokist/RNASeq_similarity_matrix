@@ -7,8 +7,11 @@ library(readr)
 library(tibble)
 library(tidyr)
 library(stringr)
+
+
 tmp=tempfile()
-snpgdsVCF2GDS('vcf_file.QUAL_GT_20.common_snps_only.vcf', 
+filename='bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf'
+snpgdsVCF2GDS(filename, 
               tmp,  
               method="biallelic.only")
 
@@ -39,7 +42,6 @@ ibs_aug%>%
   labs(title='Sequence Similarity Plot',
        x='',
        y='')
-print('hello')
 
 ggsave('sequence_similarity.pdf', width = 15,height=15,dpi=300)
 
