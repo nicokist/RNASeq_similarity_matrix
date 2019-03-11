@@ -11,12 +11,12 @@ Doing this requires a number of tools and commands, we have wrapped these in a d
 - Align the RNASeq data to the genome (gcHR37). We recommend the STAR aligner (https://github.com/alexdobin/STAR). The rest of the pipeline assumes you've generated one sorted bam file per sample, place these in an otherwise empty directory called `bam_files`. 
 - Download and build the docker image.
 ```
-git clone https://github.com/nicokist/RNASeq_sample_relatedness_matrix
-docker build RNASeq_sample_relatedness_matrix -t rnaseq_relatedness
+git clone https://github.com/nicokist/RNASeq_similarity_matrix
+docker build RNASeq_similarity_matrix -t rnaseq_similarity_matrix
 ```
 - Run the following docker invocation on a machine with sufficient memory and cores. This may take a few days if you have many samples. It is recommended to start with just three bam files to see if the pipeline completes.
 ```
-sudo docker run --user `id -u`:`id -g` -it -v `pwd`:/data rnaseq_relatedness
+sudo docker run --user `id -u`:`id -g` -it -v `pwd`:/data rnaseq_similarity_matrix
 ```
 - The sequence similarity matrix and a visualization thereof will be left in the current directory if everything finishes successfully.
 
@@ -56,7 +56,7 @@ or alternatively, if you have single unpaired reads:
 We use Docker to deliver a linux image with everything needed for the pipeline pre-installed. This includes a script which executes all steps in turn. If for some reason you wish to use one of the supplied programs manually you can use the following invocation, with the desired command in quotation marks after `bash -c` at the end:
 
 ```
-sudo docker run  -it -v `pwd`:/data rnaseq_relatedness bash -c "find bam_files/*.bam | xargs -P 30 -n 1 /samtools index"
+sudo docker run  -it -v `pwd`:/data rnaseq_similarity_matrix bash -c "find bam_files/*.bam | xargs -P 30 -n 1 /samtools index"
 ```
 
 ## What the docker invocation does.
