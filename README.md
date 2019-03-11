@@ -39,7 +39,7 @@ mkdir Homo_sapiens.GRCh38.dna_sm.primary_assembly.star_genome
 docker run -v `pwd`:/data star STAR --runThreadN `nproc` --runMode genomeGenerate --genomeDir /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.star_genome --genomeFastaFiles /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa --sjdbGTFfile /data/gencode.v29.primary_assembly.annotation.gtf
 ```
 
-Then generate a bam file by running the following command for each sample (paired reads):
+Then generate a bam file by running the following command for each sample (paired ends):
 
 ```
 
