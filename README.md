@@ -30,8 +30,8 @@ wget 'ftp://ftp.ensembl.org/pub/release-84/fasta/homo_sapiens/dna/Homo_sapiens.G
 gzip -d Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz
 
 
-wget 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.annotation.gtf.gz'
-gzip -d gencode.v29.annotation.gtf.gz
+wget 'ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.primary_assembly.annotation.gtf.gz'
+gzip -d gencode.v29.primary_assembly.annotation.gtf.gz
 
 
 docker build https://raw.githubusercontent.com/alexdobin/STAR/master/extras/docker/Dockerfile -t star
