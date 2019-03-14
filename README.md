@@ -48,6 +48,7 @@ Then generate a bam file by running the following command for each sample (paire
 or alternatively, if you have single unpaired reads:
 
 ```
+find fasta_files/*.gz | xargs -t -I {} -n 1 docker run -v `pwd`:/data star STAR --runThreadN `nproc` --genomeDir /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.star_genome  --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --readFilesIn /data/{} --outFileNamePrefix /data/{}
 
 ```
 
