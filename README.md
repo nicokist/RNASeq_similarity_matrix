@@ -39,18 +39,13 @@ mkdir Homo_sapiens.GRCh38.dna_sm.primary_assembly.star_genome
 docker run -v `pwd`:/data star STAR --runThreadN `nproc` --runMode genomeGenerate --genomeDir /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.star_genome --genomeFastaFiles /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa --sjdbGTFfile /data/gencode.v29.primary_assembly.annotation.gtf
 ```
 
-Then generate a bam file by running the following command for each sample (paired ends):
-
-```
-
-```
-
-or alternatively, if you have single unpaired reads:
-
+Then generate a bam file by running the following command, which will align each fastq file to the reference separately (single unpaired reads):
 ```
 find fasta_files/*.gz | xargs -t -I {} -n 1 docker run -v `pwd`:/data star STAR --runThreadN `nproc` --genomeDir /data/Homo_sapiens.GRCh38.dna_sm.primary_assembly.star_genome  --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --readFilesIn /data/{} --outFileNamePrefix /data/{}
 
 ```
+
+If you have paired reads you will need to write a quick script rather than use xargs as above. See STAR manual for details.
 
 
 # Technical Details
