@@ -118,4 +118,4 @@ By default this analysis is limited to chromosome 1 as this gives abundant signa
 
 If the bam file entrypoint is used we require a different BAM file be provided for each sample, as the readgroups will be overwritten using the filename after merging the files.
 
-In spite of our stringent filtering we do not fully recover the genomic SNPs, resulting in some leftover difference between different samples from the same patients, however the resulting identity-by-sequence should still be around 98%
+In spite of our stringent filtering we do not fully recover the genomic SNPs, resulting in some leftover difference between different samples from the same patients.
