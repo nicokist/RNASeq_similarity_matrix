@@ -20,8 +20,11 @@ sudo docker run --user `id -u`:`id -g` -it -v `pwd`:/data rnaseq_similarity_matr
 ```
 - The sequence similarity matrix and a visualization thereof will be left in the current directory if everything finishes successfully.
 
+# Citation
+Link to preprint to follow.
 
-# If you don't have bam files
+# Troubleshooting
+## If you don't have bam files
 If you don't have GRCh38 bam files it is recommended to use STAR to align your fastq files to the reference genome, creating a single bam file for each sample.
 
 First generate a genome index:
@@ -47,6 +50,28 @@ find fasta_files/*.gz | xargs -t -I {} -n 1 docker run -v `pwd`:/data star STAR 
 
 If you have paired reads you will need to write a quick script rather than use xargs as above. See STAR manual for details.
 
+
+## Error: 'Region "1" specifies an unkown reference name'
+If you get the following output you need to convert the IDs of the bam file.
+
+```
+Running: "find bam_files/*.bam | xargs -P `nproc` -n 1 /app/samtools index"
+Success
+Running: "/app/samtools merge --threads `nproc` -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam"
+[bam_merge_core2] Region "1" specifies an unknown reference name
+Traceback (most recent call last):
+  File "/app/RNASeq_sample_confusion.py", line 18, in <module>
+    "/app/samtools merge --threads `nproc` -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam"
+  File "/app/RNASeq_sample_confusion.py", line 13, in call_and_check
+    raise ValueError("non-zero return code")
+ValueError: non-zero return code
+```
+
+Move the bam_files directory to original_bam_files and run the following, which will generate a new bam_files directory with appropriate sequence IDs in the bam files.
+
+```
+for file in *.bam; do filename=`echo $file | cut -d "." -f 1`; samtools view -H $file | sed -e 's/SN:chr/SN:/' | samtools reheader - $file > ${filename}.no_chr.bam; done
+````
 
 # Technical Details
 We use Docker to deliver a linux image with everything needed for the pipeline pre-installed. This includes a script which executes all steps in turn. If for some reason you wish to use one of the supplied programs manually you can use the following invocation, with the desired command in quotation marks after `bash -c` at the end:
