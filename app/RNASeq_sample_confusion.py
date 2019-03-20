@@ -13,18 +13,18 @@ def call_and_check(command):
         raise ValueError("non-zero return code")
 
 
-call_and_check("find bam_files/*.bam | xargs -P `nproc` -n 1 /app/samtools index")
+call_and_check("find bam_files/*.bam | xargs -P `nproc` -n 1 samtools index")
 call_and_check(
-    "/app/samtools merge --threads `nproc` -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam"
+    "samtools merge --threads `nproc` -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam"
 )
 call_and_check(
-    "/app/samtools view -H bam_files.merged_chr1.bam | grep -v '^@RG' > bam_files.merged_chr1.new_header"
+    "samtools view -H bam_files.merged_chr1.bam | grep -v '^@RG' > bam_files.merged_chr1.new_header"
 )
 call_and_check(
-    "find bam_files/*.bam | /app/generate_RGs.py >> bam_files.merged_chr1.new_header"
+    "find bam_files/*.bam | generate_RGs.py >> bam_files.merged_chr1.new_header"
 )
 call_and_check(
-    "/app/samtools reheader bam_files.merged_chr1.new_header bam_files.merged_chr1.bam > bam_files.merged_chr1.header_withRG.bam"
+    "samtools reheader bam_files.merged_chr1.new_header bam_files.merged_chr1.bam > bam_files.merged_chr1.header_withRG.bam"
 )
 call_and_check(
     "java -jar /app/gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar MarkDuplicates --INPUT bam_files.merged_chr1.header_withRG.bam --OUTPUT bam_files.merged_chr1.header_withRG.MarkDuplicates.bam --CREATE_INDEX -M MarkDuplicates.metrics --VALIDATION_STRINGENCY LENIENT"
@@ -34,7 +34,7 @@ call_and_check(
 # presupplied as chr1_regions in resources directory.
 
 call_and_check(
-    "/app/samtools faidx /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
+    "samtools faidx /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
 )
 
 
@@ -48,12 +48,12 @@ call_and_check(
 
 
 call_and_check(
-    "/app/vcffilter -f 'QUAL > 20' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf > bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf"
+    "vcffilter -f 'QUAL > 20' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf > bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf"
 )
 call_and_check(
     "grep '^#' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf > bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
 )
 call_and_check(
-    "/app/bedtools intersect -a bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf -b /app/00-common_all.vcf.gz -wa >> bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
+    "bedtools intersect -a bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf -b /app/00-common_all.vcf.gz -wa >> bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
 )
 call_and_check("R CMD BATCH /app/vcf_to_similarity_matrix.R")
