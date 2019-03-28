@@ -4,7 +4,7 @@ Sample confusion is a common laboratory problem. In RNASeq this is frequently te
 Here we present a tool that leverages RNASeq reads to call genomic SNPs, and use that to generate a similarity matrix between all samples to detect sample confusion. RNASeq data is often used to detetermine transcript abundances for each gene after which the original data is discarded. However, the SNP data obtained by RNASeq can be used to generate a similarity matrix. Samples from the same patient should be highly similar (allowing for some discrepancy due to callign errors and missingness), whikle samples from different patients should not be similar (assuming patients are unrelated). Doing this requires a number of tools and commands, and so we have wrapped these in a docker image to create a tool that simplifies the process into one step. 
 
 ## Instructions
-- Align the RNASeq data to the genome (gcHR37). We recommend the STAR aligner (https://github.com/alexdobin/STAR). The rest of the pipeline assumes you've generated one sorted bam file per sample, place these in an otherwise empty directory called `bam_files`. 
+- Align the RNASeq data to the genome (GRCh37). We recommend the STAR aligner (https://github.com/alexdobin/STAR). The rest of the pipeline assumes you've generated one sorted bam file per sample, place these in an otherwise empty directory called `bam_files`. 
 - Download and build the docker image.
 ```
 git clone https://github.com/nicokist/RNASeq_similarity_matrix
