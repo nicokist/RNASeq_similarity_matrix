@@ -1,5 +1,16 @@
-#!/usr/bin/env Rscript
+---
+title: "RNASeq_similarity_matrix: results"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_levels: 5
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
 
+```{r}
 library(ggplot2)
 library(SNPRelate)
 library(dplyr)
@@ -7,7 +18,6 @@ library(readr)
 library(tibble)
 library(tidyr)
 library(stringr)
-
 
 tmp=tempfile()
 filename='bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf'
@@ -17,9 +27,7 @@ snpgdsVCF2GDS(filename,
 
 genofile <- openfn.gds(tmp)
 
-ibs <- snpgdsIBS(genofile, remove.monosnp = TRUE, missing=0.9)
-image(ibs$ibs, col=terrain.colors(16))
-
+ibs <- snpgdsIBS(genofile, remove.monosnp = FALSE, missing=0.9,maf = 0.05)
 colnames(ibs$ibs)=ibs$sample.id
 
 ibs_tibble=as.tibble(ibs$ibs)%>%
@@ -43,6 +51,8 @@ ibs_aug%>%
        x='',
        y='')
 
-ggsave('sequence_similarity.pdf', width = 15,height=15,dpi=300)
+ggsave('rnaseq_similarity_matrix.result.pdf', width = 15,height=15,dpi=300)
+write_csv(ibs_aug, 'rnaseq_similarity_matrix.result.pdf')
+```
 
-write_csv(ibs_aug, 'sequence_similarity_csv')
+
