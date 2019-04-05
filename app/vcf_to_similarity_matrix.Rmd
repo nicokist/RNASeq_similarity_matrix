@@ -52,7 +52,7 @@ ibs_aug%>%
        y='')
 
 ggsave('rnaseq_similarity_matrix.result.pdf', width = 15,height=15,dpi=300)
-write_csv(ibs_aug, 'rnaseq_similarity_matrix.result.pdf')
+write_csv(ibs_aug, 'rnaseq_similarity_matrix.result.csv')
 ```
 
 
