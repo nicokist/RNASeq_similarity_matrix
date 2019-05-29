@@ -69,7 +69,7 @@ def process_freebayes_output(prefix=""):
 
 def generate_incomplete_results():
     while True:
-        time.sleep(15)  # two hours
+        time.sleep(2*60*60)  # two hours
         try:
             print(
                 "\tgenerating incomplete output while continuing with variant calling."
