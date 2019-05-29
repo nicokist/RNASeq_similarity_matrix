@@ -2,10 +2,10 @@
 import os
 import subprocess
 import threading
+import time
 
 def call_and_check(command):
     print('Running: "' + command + '"')
-    return 1
     ret = subprocess.call(command, shell=True)
     if ret == 0:
         print("Success")
@@ -52,8 +52,13 @@ def process_freebayes_output(prefix=""):
 
 
 def generate_incomplete_results():
-    sleep(15)
-    process_freebayes_output('INCOMPLETE.')
+    while(True):
+        time.sleep(15) # two hours
+        try:
+            print('\tgenerating incomplete output while continuing with variant calling.')
+            process_freebayes_output('INCOMPLETE.')
+        except ValueError:
+            print('\tFailed to generate incomplete output, continuing with variant calling.')
 
 
 background = threading.Thread(target=generate_incomplete_results)
@@ -71,3 +76,4 @@ call_and_check(
 )
 
 process_freebayes_output(prefix="") ## The proper one run when freegbayes-parallel has returned
+
