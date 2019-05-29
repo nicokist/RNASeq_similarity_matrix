@@ -7,10 +7,23 @@ library(readr)
 library(tibble)
 library(tidyr)
 library(stringr)
-
-
+library(optparse)
 tmp=tempfile()
-filename='bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf'
+
+ 
+option_list = list(
+  make_option("--file", type="character", default=NULL, 
+              help="cleaned vcf file name", metavar="character"),
+	make_option("--out", type="character", default="sequence_similarity", 
+              help="output file stem (before extension) [default= %default]", metavar="character")
+);
+ 
+opt_parser = OptionParser(option_list=option_list);
+opt = parse_args(opt_parser);
+
+filename=opt$file
+stem = opt$out
+
 snpgdsVCF2GDS(filename, 
               tmp,  
               method="biallelic.only")
@@ -43,6 +56,9 @@ ibs_aug%>%
        x='',
        y='')
 
-ggsave('sequence_similarity.pdf', width = 15,height=15,dpi=300)
+ggsave(paste0(stem,'.pdf', width = 15,height=15,dpi=300)
+ggsave(paste0(stem,'.png', width = 15,height=15,dpi=300)
 
-write_csv(ibs_aug, 'sequence_similarity.csv')
+
+
+write_csv(ibs_aug, paste0(stem,'.csv'))

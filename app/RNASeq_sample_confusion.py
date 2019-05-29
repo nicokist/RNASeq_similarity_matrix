@@ -1,17 +1,16 @@
 #!/usr/bin/env python
-##Insert code to move bam files to bam_files.
 import os
 import subprocess
-
+import threading
 
 def call_and_check(command):
     print('Running: "' + command + '"')
+    return 1
     ret = subprocess.call(command, shell=True)
     if ret == 0:
         print("Success")
     if ret != 0:
         raise ValueError("non-zero return code")
-
 
 call_and_check("find bam_files/*.bam | xargs -P `nproc` -n 1 samtools index")
 call_and_check(
@@ -38,6 +37,31 @@ call_and_check(
 )
 
 
+## This is run after the freebayes-parallel command below but needs to be defined here.
+def process_freebayes_output(prefix=""):
+    call_and_check(
+"vcffilter -f 'QUAL > 20' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf > "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf"
+)
+    call_and_check(
+    "grep '^#' "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf > "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
+)
+    call_and_check(
+    "bedtools intersect -a "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf -b /app/00-common_all.vcf.gz -wa >> "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
+)
+    call_and_check("/app/vcf_to_similarity_matrix.R --file "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf --out "+prefix+"sequence_similarity")
+
+
+def generate_incomplete_results():
+    sleep(15)
+    process_freebayes_output('INCOMPLETE.')
+
+
+background = threading.Thread(target=generate_incomplete_results)
+background.start()
+
+
+
+
 
 call_and_check(
     """ulimit -n 160000;
@@ -46,14 +70,4 @@ call_and_check(
     """
 )
 
-
-call_and_check(
-    "vcffilter -f 'QUAL > 20' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf > bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf"
-)
-call_and_check(
-    "grep '^#' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf > bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
-)
-call_and_check(
-    "bedtools intersect -a bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf -b /app/00-common_all.vcf.gz -wa >> bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
-)
-call_and_check("R CMD BATCH /app/vcf_to_similarity_matrix.R")
+process_freebayes_output(prefix="") ## The proper one run when freegbayes-parallel has returned
