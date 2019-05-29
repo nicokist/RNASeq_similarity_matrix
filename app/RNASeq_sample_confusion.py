@@ -4,6 +4,7 @@ import subprocess
 import threading
 import time
 
+
 def call_and_check(command):
     print('Running: "' + command + '"')
     ret = subprocess.call(command, shell=True)
@@ -11,6 +12,7 @@ def call_and_check(command):
         print("Success")
     if ret != 0:
         raise ValueError("non-zero return code")
+
 
 call_and_check("find bam_files/*.bam | xargs -P `nproc` -n 1 samtools index")
 call_and_check(
@@ -32,40 +34,55 @@ call_and_check(
 # ~/tools/freebayes/scripts/fasta_generate_regions.py ~/temp/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa 100000 |  grep '^1\:'  > ~/temp/
 # presupplied as chr1_regions in resources directory.
 
-call_and_check(
-    "samtools faidx /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
-)
+call_and_check("samtools faidx /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa")
 
 
 ## This is run after the freebayes-parallel command below but needs to be defined here.
 def process_freebayes_output(prefix=""):
     call_and_check(
-"vcffilter -f 'QUAL > 20' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf > "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf"
-)
+        "vcffilter -f 'QUAL > 20' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf > "
+        + prefix
+        + "bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf"
+    )
     call_and_check(
-    "grep '^#' "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf > "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
-)
+        "grep '^#' "
+        + prefix
+        + "bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf > "
+        + prefix
+        + "bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
+    )
     call_and_check(
-    "bedtools intersect -a "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf -b /app/00-common_all.vcf.gz -wa >> "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
-)
-    call_and_check("/app/vcf_to_similarity_matrix.R --file "+prefix+"bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf --out "+prefix+"sequence_similarity")
+        "bedtools intersect -a "
+        + prefix
+        + "bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.vcf -b /app/00-common_all.vcf.gz -wa >> "
+        + prefix
+        + "bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf"
+    )
+    call_and_check(
+        "/app/vcf_to_similarity_matrix.R --file "
+        + prefix
+        + "bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf --out "
+        + prefix
+        + "sequence_similarity"
+    )
 
 
 def generate_incomplete_results():
-    while(True):
-        time.sleep(15) # two hours
+    while True:
+        time.sleep(15)  # two hours
         try:
-            print('\tgenerating incomplete output while continuing with variant calling.')
-            process_freebayes_output('INCOMPLETE.')
+            print(
+                "\tgenerating incomplete output while continuing with variant calling."
+            )
+            process_freebayes_output("INCOMPLETE.")
         except ValueError:
-            print('\tFailed to generate incomplete output, continuing with variant calling.')
+            print(
+                "\tFailed to generate incomplete output, continuing with variant calling."
+            )
 
 
 background = threading.Thread(target=generate_incomplete_results)
 background.start()
-
-
-
 
 
 call_and_check(
@@ -75,5 +92,6 @@ call_and_check(
     """
 )
 
-process_freebayes_output(prefix="") ## The proper one run when freegbayes-parallel has returned
-
+process_freebayes_output(
+    prefix=""
+)  ## The proper one run when freegbayes-parallel has returned
