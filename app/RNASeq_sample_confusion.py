@@ -82,6 +82,7 @@ def generate_incomplete_results():
 
 
 background = threading.Thread(target=generate_incomplete_results)
+background.demon = True
 background.start()
 
 
