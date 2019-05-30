@@ -61,8 +61,8 @@ ibs_aug %>%
     y = ""
   )
 
-ggsave(paste0(stem, ".pdf"), width = 15, height = 15, dpi = 300))
-ggsave(paste0(stem, ".png"), width = 15, height = 15, dpi = 300))
+ggsave(paste0(stem, ".pdf"), width = 15, height = 15, dpi = 300)
+ggsave(paste0(stem, ".png"), width = 15, height = 15, dpi = 300)
 
 
 
