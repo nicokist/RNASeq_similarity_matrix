@@ -43,4 +43,4 @@ print('hello')
 
 ggsave('sequence_similarity.pdf', width = 15,height=15,dpi=300)
 
-write_csv(ibs_aug, 'sequence_similarity_csv')
+write_csv(ibs_aug, 'sequence_similarity.csv')
