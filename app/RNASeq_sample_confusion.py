@@ -13,47 +13,47 @@ def call_and_check(command):
         raise ValueError("non-zero return code")
 
 
-call_and_check("find bam_files/*.bam | xargs -P `nproc` -n 1 /app/samtools index")
-call_and_check(
-    "/app/samtools merge --threads `nproc` -r -R 1 bam_files.merged_chr1.bam bam_files/*.bam"
-)
-call_and_check(
-    "/app/samtools view -H bam_files.merged_chr1.bam | grep -v '^@RG' > bam_files.merged_chr1.new_header"
-)
-call_and_check(
-    "find bam_files/*.bam | /app/generate_RGs.py >> bam_files.merged_chr1.new_header"
-)
-call_and_check(
-    "/app/samtools reheader bam_files.merged_chr1.new_header bam_files.merged_chr1.bam > bam_files.merged_chr1.header_withRG.bam"
-)
-call_and_check(
-    "java -jar /app/gatk-4.1.0.0/gatk-package-4.1.0.0-local.jar MarkDuplicates --INPUT bam_files.merged_chr1.header_withRG.bam --OUTPUT bam_files.merged_chr1.header_withRG.MarkDuplicates.bam --CREATE_INDEX -M MarkDuplicates.metrics --VALIDATION_STRINGENCY LENIENT"
-)
-
-# ~/tools/freebayes/scripts/fasta_generate_regions.py ~/temp/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa 100000 |  grep '^1\:'  > ~/temp/
-# presupplied as chr1_regions in resources directory.
-
 call_and_check(
     "/app/samtools faidx /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
 )
-
-
-
 call_and_check(
-    """ulimit -n 160000;
-    cd /app/freebayes/scripts;
-    ./freebayes-parallel /app/chr1_regions `nproc` --use-best-n-alleles 4 -f /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -b /data/bam_files.merged_chr1.header_withRG.MarkDuplicates.bam > /data/bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf;
-    """
+    "/app/gatk-4.1.0.0/gatk CreateSequenceDictionary -R /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
+)
+call_and_check(
+    "/app/gatk-4.1.0.0/gatk IndexFeatureFile -F /app/00-common_all.vcf.gz "
 )
 
 
-call_and_check(
-    "/app/vcffilter -f 'QUAL > 20' bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.vcf > vcf_file.QUAL_GT_20.vcf"
-)
-call_and_check(
-    "grep '^#' vcf_file.QUAL_GT_20.vcf > vcf_file.QUAL_GT_20.common_snps_only.vcf"
-)
-call_and_check(
-    "/app/bedtools intersect -a vcf_file.QUAL_GT_20.vcf -b /app/00-common_all.vcf.gz -wa >> vcf_file.QUAL_GT_20.common_snps_only.vcf"
-)
+bam_files = [i for i in os.listdir('bam_files') if i.endswith('.bam')]
+roots=[filename[0:-4] for filename in bam_files]
+try:
+    os.mkdir('intermediate_files')
+except OSError:
+    pass
+
+for root in roots:
+    call_and_check(
+        "/app/samtools index bam_files/{0}.bam".format(root)
+    )
+
+
+    call_and_check("samtools view -b bam_files/{0}.bam 1 > intermediate_files/{0}.chr1.bam".format(root))
+
+
+    call_and_check("java -jar /app/picard.jar AddOrReplaceReadGroups I=intermediate_files/{0}.chr1.bam O=intermediate_files/{0}.chr1.RGs.bam CREATE_INDEX=true RGID='XX' RGLB='XX' RGPL='XX' RGPU='XX' RGSM=${0}".format(root))
+
+    call_and_check("java -jar /app/picard.jar MarkDuplicates I=intermediate_files/{0}.chr1.RGs.bam O=intermediate_files/{0}.chr1.RGs.no_duplicates.bam CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT REMOVE_SEQUENCING_DUPLICATES=true M={0}.metrics".format(root))
+
+    call_and_check("/app/gatk-4.1.0.0/gatk SplitNCigarReads -R /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -L 1 -I intermediate_files/{0}.chr1.RGs.no_duplicates.bam -O intermediate_files/{0}.chr1.RGs.no_duplicates.split_cigar.bam".format(root))
+
+    call_and_check("/app/gatk-4.1.0.0/gatk BaseRecalibrator -R /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -L 1 --known-sites /app/00-common_all.vcf.gz -I intermediate_files/{0}.chr1.RGs.no_duplicates.split_cigar.bam -O intermediate_files/{0}.recalibration.table".format(root))
+
+    call_and_check("/app/gatk-4.1.0.0/gatk ApplyBQSR -R /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -L 1 --bqsr-recal-file intermediate_files/{0}.recalibration.table -I intermediate_files/{0}.chr1.RGs.no_duplicates.split_cigar.bam -O intermediate_files/${FILE_NAME}.chr1.RG.NoDup.Split.BQSR.bam".format(root))
+
+    call_and_check("/app/gatk-4.1.0.0/gatk HaplotypeCaller -R /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -I intermediate_files/{0}.chr1.RG.NoDup.Split.BQSR.bam -L 1 --dont-use-soft-clipped-bases --standard-min-confidence-threshold-for-calling 20.0 --dbsnp /app/00-common_all.vcf.gz -O /intermediate_files/{}.chr1.vcf.gz -A QualByDepth -A Coverage -A ClippingRankSumTest -A DepthPerSampleHC".format(root))
+      
+    call_and_check("/app/gatk-4.1.0.0/gatk VariantFiltration -V intermediate_files/{0}.chr1.vcf.gz -window 35 -cluster 3 --filter-name "FS" --filter-expression "FS > 30.0" --filter-name "QD" --filter-expression "QD < 2.0" -O intermediate_files/{0}.chr1.filtered.vcf.gz".format(root))
+
+call_and_check("bcftools merge intermediate_files/*.chr1.filtered.vcf.gz > intermediate_files/merged.chr1.vcf.gz")
+
 call_and_check("R CMD BATCH /app/vcf_to_similarity_matrix.R")

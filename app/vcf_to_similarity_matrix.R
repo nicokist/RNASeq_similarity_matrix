@@ -8,7 +8,7 @@ library(tibble)
 library(tidyr)
 library(stringr)
 tmp=tempfile()
-snpgdsVCF2GDS('vcf_file.QUAL_GT_20.common_snps_only.vcf', 
+snpgdsVCF2GDS('intermediate_files/vcf_file.QUAL_GT_20.common_snps_only.vcf', 
               tmp,  
               method="biallelic.only")
 
