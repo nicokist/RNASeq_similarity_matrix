@@ -20,19 +20,8 @@ RUN apt-get -y install software-properties-common
 RUN add-apt-repository "deb http://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/"
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9 
 RUN apt-get update
-RUN apt-get install -y r-base r-base-dev
+RUN apt-get install -y r-base r-base-dev bcftools
 
-
-##Samtools is included as a binary in the repository, gatk and freebayes were too large for github so are obtained properly.
-RUN git clone --recursive git://github.com/ekg/freebayes.git
-#WORKDIR /app/freebayes
-#RUN make
-#RUN cp /app/freebayes/bin/freebayes /usr/local/bin
-#
-#WORKDIR /app/freebayes/vcflib
-#RUN make
-#RUN cp bin/* /usr/local/bin/
-#
 COPY app/* /app/
 RUN chmod -R 777 /app
 

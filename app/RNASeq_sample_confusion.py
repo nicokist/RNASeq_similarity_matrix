@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-##Insert code to move bam files to bam_files.
 import os
 import subprocess
-
 
 def call_and_check(command):
     print('Running: "' + command + '"')
@@ -40,9 +38,9 @@ for root in roots:
     call_and_check("/app/samtools view -b bam_files/{0}.bam 1 > intermediate_files/{0}.chr1.bam".format(root))
 
 
-    call_and_check("java -jar /app/picard.jar AddOrReplaceReadGroups I=intermediate_files/{0}.chr1.bam O=intermediate_files/{0}.chr1.RGs.bam CREATE_INDEX=true RGID='XX' RGLB='XX' RGPL='XX' RGPU='XX' RGSM=${0}".format(root))
+    call_and_check("java -jar /app/picard.jar AddOrReplaceReadGroups I=intermediate_files/{0}.chr1.bam O=intermediate_files/{0}.chr1.RGs.bam CREATE_INDEX=true RGID='XX' RGLB='XX' RGPL='XX' RGPU='XX' RGSM='${0}'".format(root))
 
-    call_and_check("java -jar /app/picard.jar MarkDuplicates I=intermediate_files/{0}.chr1.RGs.bam O=intermediate_files/{0}.chr1.RGs.no_duplicates.bam CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT REMOVE_SEQUENCING_DUPLICATES=true M={0}.metrics".format(root))
+    call_and_check("java -jar /app/picard.jar MarkDuplicates I=intermediate_files/{0}.chr1.RGs.bam O=intermediate_files/{0}.chr1.RGs.no_duplicates.bam CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT REMOVE_SEQUENCING_DUPLICATES=true M=intermediate_files/{0}.metrics".format(root))
 
     call_and_check("/app/gatk-4.1.0.0/gatk SplitNCigarReads -R /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa -L 1 -I intermediate_files/{0}.chr1.RGs.no_duplicates.bam -O intermediate_files/{0}.chr1.RGs.no_duplicates.split_cigar.bam".format(root))
 
