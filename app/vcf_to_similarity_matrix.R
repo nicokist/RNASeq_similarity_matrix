@@ -8,14 +8,13 @@ library(tibble)
 library(tidyr)
 library(stringr)
 tmp=tempfile()
-snpgdsVCF2GDS('intermediate_files/merged.chr1.vcf.gz', 
+snpgdsVCF2GDS('intermediate_files/merged.region_only.vcf.gz', 
               tmp,  
               method="biallelic.only")
 
 genofile <- openfn.gds(tmp)
 
 ibs <- snpgdsIBS(genofile, remove.monosnp = TRUE, missing=0.9)
-image(ibs$ibs, col=terrain.colors(16))
 
 colnames(ibs$ibs)=ibs$sample.id
 
@@ -39,7 +38,6 @@ ibs_aug%>%
   labs(title='Sequence Similarity Plot',
        x='',
        y='')
-print('hello')
 
 ggsave('sequence_similarity.pdf', width = 15,height=15,dpi=300)
 
