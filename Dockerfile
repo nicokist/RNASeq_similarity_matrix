@@ -4,6 +4,9 @@ RUN apt-get update
 RUN apt-get install -y tzdata
 RUN apt-get install -y python parallel default-jre git build-essential zlib1g-dev libbz2-dev libhts-dev liblzma-dev wget unzip lzma git libcurl4-openssl-dev
 
+RUN mkdir /.parallel
+RUN touch /.parallel/will-cite
+
 WORKDIR /app
 RUN wget -q ftp://ftp.ensembl.org/pub/release-84/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz
 RUN gzip -d /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.gz
@@ -30,4 +33,5 @@ RUN tar -xjf /app/usr_lib_R_site-library.tar.bz2
 
 
 WORKDIR /data/
+ENV PATH="/app/:${PATH}"
 CMD ["python", "/app/RNASeq_sample_confusion.py"]

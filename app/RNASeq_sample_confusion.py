@@ -17,7 +17,6 @@ def call_and_check(command):
     if ret != 0:
         raise ValueError("non-zero return code")
 
-
 call_and_check(
     "/app/samtools faidx /app/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
 )
@@ -27,7 +26,6 @@ call_and_check(
 call_and_check(
     "/app/gatk-4.1.0.0/gatk IndexFeatureFile -F /app/00-common_all.vcf.gz "
 )
-
 
 bam_files = [i for i in os.listdir('bam_files') if i.endswith('.bam')]
 roots=[filename[0:-4] for filename in bam_files]
@@ -43,7 +41,6 @@ for root in roots:
 
 
     call_and_check("/app/samtools view -b bam_files/{0}.bam {1} > intermediate_files/{0}.region_only.bam".format(root, args.region))
-
 
     call_and_check("java -jar /app/picard.jar AddOrReplaceReadGroups I=intermediate_files/{0}.region_only.bam O=intermediate_files/{0}.region_only.RGs.bam CREATE_INDEX=true RGID='XX' RGLB='XX' RGPL='XX' RGPU='XX' RGSM='${0}'".format(root))
 

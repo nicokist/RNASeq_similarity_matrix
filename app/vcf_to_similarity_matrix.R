@@ -7,6 +7,8 @@ library(readr)
 library(tibble)
 library(tidyr)
 library(stringr)
+
+
 tmp=tempfile()
 snpgdsVCF2GDS('intermediate_files/merged.region_only.vcf.gz', 
               tmp,  
