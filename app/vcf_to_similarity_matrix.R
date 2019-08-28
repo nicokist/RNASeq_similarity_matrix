@@ -10,19 +10,17 @@ library(stringr)
 
 
 tmp=tempfile()
-filename='bam_files.merged_chr1.header_withRG.MarkDuplicates.freebayes_best_4_alleles.QUAL_GT_20.common_snps_only.vcf'
-snpgdsVCF2GDS(filename, 
+snpgdsVCF2GDS('intermediate_files/merged.region_only.vcf.gz', 
               tmp,  
               method="biallelic.only")
 
 genofile <- openfn.gds(tmp)
 
 ibs <- snpgdsIBS(genofile, remove.monosnp = TRUE, missing=0.9)
-image(ibs$ibs, col=terrain.colors(16))
 
 colnames(ibs$ibs)=ibs$sample.id
 
-ibs_tibble=as.tibble(ibs$ibs)%>%
+ibs_tibble=as_tibble(ibs$ibs)%>%
   mutate(ID1=ibs$sample.id)%>%
   gather('ID2','IBS',c(-ID1))
 
@@ -35,7 +33,7 @@ ibs_aug=ibs_tibble %>%
 ibs_aug%>%
   ggplot()+
   aes(x=ID1, y=ID2, fill=IBS)+
-  geom_raster()+
+  geom_tile()+
   scale_fill_viridis_c()+
   theme(axis.text.y = element_text(size=5, family = 'mono'))+
   theme(axis.text.x = element_text(angle=-90, hjust=0, vjust=0, size=5, family='mono'))+
