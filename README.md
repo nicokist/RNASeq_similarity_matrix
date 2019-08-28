@@ -10,7 +10,7 @@ Here we present a tool that leverages RNASeq reads to call genomic SNPs, and use
 git clone https://github.com/nicokist/RNASeq_similarity_matrix
 docker build RNASeq_similarity_matrix -t rnaseq_similarity_matrix
 ```
-- Run the following docker invocation on a machine with sufficient memory and cores. This may take a few days if you have many samples. It is recommended to start with just three bam files to see if the pipeline completes.
+- Run the following docker invocation on a machine with sufficient memory and cores. It is recommended to start with just three bam files to see if the pipeline completes.
 ```
 docker run --user `id -u`:`id -g` -it -v `pwd`:/data rnaseq_similarity_matrix
 ```
