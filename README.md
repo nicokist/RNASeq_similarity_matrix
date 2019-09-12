@@ -72,8 +72,6 @@ docker run --user `id -u`:`id -g` -it -v `pwd`:/data rnaseq_similarity_matrix re
 ## The program fails unexpectedly
 Perhaps you ran out of memory? Run `dmesg` and check if the oom-killer ended the process.
 
-## Hang during freebayes phase
-Sometimes a single freebayes process gets stuck; kill the stuck freebayes process and rnaeq_similarity_matrix will continue to run.
 
 # Technical Details
 We use Docker to deliver a linux image with everything needed for the pipeline pre-installed. This includes a script which executes all steps in turn. If for some reason you wish to use one of the supplied programs manually you can use the following invocation, with the desired command in quotation marks after `bash -c` at the end:
