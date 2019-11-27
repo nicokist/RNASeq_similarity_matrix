@@ -17,7 +17,7 @@ docker run --user `id -u`:`id -g` -it -v `pwd`:/data rnaseq_similarity_matrix
 - The sequence similarity matrix and a visualization thereof will be left in the current directory if everything finishes successfully.
 
 # Citation
-Link to preprint to follow.
+Nicolaas C Kist, Robert A Power, Andrew Skelton, Seth D Seegobin, Moira Verbelen, Bhushan Bonde, Karim Malki, RNASeq_similarity_matrix: visually identify sample mix-ups in RNASeq data using a ‘genomic’ sequence similarity matrix, Bioinformatics, , btz821, https://doi.org/10.1093/bioinformatics/btz821
 
 # Troubleshooting
 ## If you don't have bam files
