@@ -1,9 +1,8 @@
 # Generate a sample similarity matrices from RNASeq data
 
-Sample confusion is a common laboratory problem. In RNASeq this is frequently tested for by checking whether sex-specific genes (e.g. those located on the Y chromosome or the X inactivation gene) are congruent with the sex listed for that sample in the metadata. However, this method cannot be used to detect sample confusion between patients of the same sex, and is less sensitive when the phenotype skews the sex ratio of samples away from 1:1. 
-
 ![](doc/example.png)
 
+Sample confusion is a common laboratory problem. In RNASeq this is frequently tested for by checking whether sex-specific genes (e.g. those located on the Y chromosome or the X inactivation gene) are congruent with the sex listed for that sample in the metadata. However, this method cannot be used to detect sample confusion between patients of the same sex, and is less sensitive when the phenotype skews the sex ratio of samples away from 1:1. 
 
 Here we present a tool that leverages RNASeq reads to call genomic SNPs, and use that to generate a similarity matrix between all samples to detect sample confusion. RNASeq data is often used to detetermine transcript abundances for each gene after which the original data is discarded. However, the SNP data obtained by RNASeq can be used to generate a similarity matrix. Samples from the same patient should be highly similar (allowing for some discrepancy due to callign errors and missingness), while samples from different patients should not be similar (assuming patients are unrelated). Doing this requires a number of tools and commands, and so we have wrapped these in a docker image to create a tool that simplifies the process into one step. 
 
