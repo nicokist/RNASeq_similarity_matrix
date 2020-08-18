@@ -1,6 +1,6 @@
 # Generate a sample similarity matrices from RNASeq data
 
-![](doc/example.png)
+<img src="doc/example.png" width="322" height="300" alt="Example of the results">
 
 Sample confusion is a common laboratory problem. In RNASeq this is frequently tested for by checking whether sex-specific genes (e.g. those located on the Y chromosome or the X inactivation gene) are congruent with the sex listed for that sample in the metadata. However, this method cannot be used to detect sample confusion between patients of the same sex, and is less sensitive when the phenotype skews the sex ratio of samples away from 1:1. 
 
